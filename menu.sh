@@ -11,8 +11,8 @@ select_option() {
     cursor_blink_on()   { printf "$ESC[?25h"; }
     cursor_blink_off()  { printf "$ESC[?25l"; }
     cursor_to()         { printf "$ESC[$1;${2:-1}H"; }
-    print_option()      { printf "   %s\n" "$1"; }
-    print_selected()    { printf "  > \033[7m%s\033[0m\n" "$1"; }
+    print_option()      { printf "    %s\n" "$1"; }
+    print_selected()    { printf "\033[34m  ⤷ \033[4m%s\033[0m\n" "$1"; }
     clear_line()        { printf "$ESC[2K"; }
     print_input()       { printf "  Search: %s\n" "$input"; }
 
@@ -80,7 +80,7 @@ select_option() {
         # Print help message
         cursor_to $((last_index + 3))
         clear_line
-        printf "  \033[2m↑/↓: Navigate | Type to search | Enter: Select | Ctrl+C: Quit\033[0m\n"
+        printf "  \033[2m↑/↓: Navigate | Type to search | Enter: Select | Q: Quit\033[0m\n"
 
         # read user key
         IFS= read -rsn1 key  # Read first character
