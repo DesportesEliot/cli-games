@@ -4,7 +4,8 @@ select_option() {
     clear
     local -r ESC=$(printf "\033")
     local -a options=("$@")
-    local selected=0
+    local selected=1
+    local prompt="$1"
     local last_index=$((${#options[@]} - 1))
     local input=""
 
@@ -12,7 +13,7 @@ select_option() {
     cursor_blink_off()  { printf "$ESC[?25l"; }
     cursor_to()         { printf "$ESC[$1;${2:-1}H"; }
     print_option()      { printf "    %s\n" "$1"; }
-    print_selected()    { printf "\033[34m  ⤷ \033[4m%s\033[0m\n" "$1"; }
+    print_selected()    { printf "$ESC[34m  ⤷ $ESC[4m%s$ESC[0m\n" "$1"; }
     clear_line()        { printf "$ESC[2K"; }
     print_input()       { printf "  Search: %s\n" "$input"; }
 
@@ -62,8 +63,17 @@ select_option() {
 
     cursor_blink_off
     stty -echo
+
+    cursor_to 0
+    clear_line
+    printf "$prompt"
+
     while true; do
         for i in "${!options[@]}"; do
+            if (( i == 0 )); then
+                continue
+            fi
+
             cursor_to $((i + 1))
             clear_line
             if [[ $i == $selected ]]; then
@@ -80,7 +90,7 @@ select_option() {
         # Print help message
         cursor_to $((last_index + 3))
         clear_line
-        printf "  \033[2m↑/↓: Navigate | Type to search | Enter: Select | Q: Quit\033[0m\n"
+        printf "  \033[2m↑/↓: Navigate | Type to search | Enter: Select | Ctrl+C: Quit\033[0m\n"
 
         # read user key
         IFS= read -rsn1 key  # Read first character
@@ -88,10 +98,10 @@ select_option() {
             read -rsn2 key  # Read 2 more chars
             if [[ $key == "[A" ]]; then  # Up
                 ((selected--))
-                ((selected < 0)) && selected=$last_index
+                ((selected < 1)) && selected=$last_index
             elif [[ $key == "[B" ]]; then  # Down
                 ((selected++))
-                ((selected > $last_index)) && selected=0
+                ((selected > $last_index)) && selected=1
             fi
         elif [[ $key == "" ]]; then  # Enter
             break
@@ -108,7 +118,7 @@ select_option() {
     cursor_blink_on
     stty echo
     printf "\nYou selected: %s\n" "${options[selected]}"
-    return $selected
+    return $(( selected - 1 ))
 }
 
 get_game_directories() {
@@ -141,45 +151,71 @@ check_game_files() {
         has_js=true
     fi
 
+    local game_command=""
     if [ "$has_python" = true ] && [ "$has_js" = true ]; then
-        echo "Both Python and Node.js versions are available. Which one would you like to run?"
         local versions=("Python" "JavaScript")
-        select_option "${versions[@]}"
+        select_option "Both Python and Node.js versions are available. Which one would you like to run?" "${versions[@]}"
         local version_choice=$?
         if [ $version_choice -eq 0 ]; then
             echo "Running Python version..."
-            cd "$game_dir" && python3 __init__.py
+            game_command="cd "$game_dir" && python3 __init__.py"
         else
             echo "Running JavaScript version..."
-            cd "$game_dir" && $jsCmd index.js
+            game_command="cd "$game_dir" && $jsCmd index.js"
         fi
     elif [ "$has_python" = true ]; then
         echo "Running Python version..."
-        cd "$game_dir" && python3 __init__.py
+        game_command="cd "$game_dir" && python3 __init__.py"
     elif [ "$has_js" = true ]; then
         echo "Running JavaScript version..."
-        cd "$game_dir" && $jsCmd index.js
+        game_command="cd "$game_dir" && $jsCmd index.js"
     else
         echo "Error: No game files found in $game_dir"
         exit 1
     fi
+    eval "$game_command"
+    handle_replay "$game_command"
 }
 
-# Get game directories and add Quit option
-game_dirs=($(get_game_directories))
-options=("${game_dirs[@]}" "Quit")
-select_option "${options[@]}"
-selected_index=$?
+handle_replay() {
+    local game_command="$1"
+    local replay_options=("Yes" "Go back to menu" "Quit")
+    select_option "Replay?" "${replay_options[@]}"
+    local option=$?
+    
+    if [[ $option -eq 0 ]]; then
+        cd ..
+        eval "$game_command"
+        handle_replay "$game_command"
+    elif [[ $option -eq 1 ]]; then
+        cd ..
+        show_menu
+    else
+        exit
+    fi
 
-# Handle the selection
-if [ $selected_index -eq ${#game_dirs[@]} ]; then
-	echo "▄▄▄▄·  ▄· ▄▌▄▄▄ .      " | lolcat -s 10000
-	echo "▐█ ▀█▪▐█▪██▌▀▄.▀·      " | lolcat -s 10000
-	echo "▐█▀▀█▄▐█▌▐█▪▐▀▀▪▄      " | lolcat -s 10000
-	echo "██▄▪▐█ ▐█▀·.▐█▄▄▌      " | lolcat -s 10000
-	echo "·▀▀▀▀   ▀ •  ▀▀▀  ▀  ▀ " | lolcat -s 10000
-    exit 0 
-else
-    selected_game="${game_dirs[$selected_index]}"
-    check_game_files "$selected_game"
-fi
+}
+
+function show_menu() {
+
+    # Get game directories and add Quit option
+    game_dirs=($(get_game_directories))
+    options=("${game_dirs[@]}" "Quit")
+    select_option "Select a game" "${options[@]}"
+    selected_index=$?
+
+    # Handle the selection
+    if [ $selected_index -eq ${#game_dirs[@]} ]; then
+        echo "▄▄▄▄·  ▄· ▄▌▄▄▄ .      " | lolcat -s 10000
+        echo "▐█ ▀█▪▐█▪██▌▀▄.▀·      " | lolcat -s 10000
+        echo "▐█▀▀█▄▐█▌▐█▪▐▀▀▪▄      " | lolcat -s 10000
+        echo "██▄▪▐█ ▐█▀·.▐█▄▄▌      " | lolcat -s 10000
+        echo "·▀▀▀▀   ▀ •  ▀▀▀  ▀  ▀ " | lolcat -s 10000
+        exit 0 
+    else
+        selected_game="${game_dirs[$selected_index]}"
+        check_game_files "$selected_game"
+    fi
+}
+
+show_menu
