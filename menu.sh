@@ -116,7 +116,7 @@ get_game_directories() {
     local game_dirs=()
     while IFS= read -r dir; do
         game_dirs+=("$dir")
-    done < <(find . -maxdepth 1 -type d -not -path "*/\.*" -not -path "*/_*" -not -path "." | sed 's|^\./||' | sort)
+    done < <(find . -maxdepth 1 -type d -not -path "*/\.*" -not -path "*/_*" -not -path "." -not -path "*/venv" | sed 's|^\./||' | sort)
     echo "${game_dirs[@]}"
 }
 
