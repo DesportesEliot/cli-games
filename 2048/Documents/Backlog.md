@@ -7,7 +7,7 @@ Ce backlog définit la feuille de route pour l'implémentation du jeu 2048 en mo
 ## 🟢 Étape 1 : Le Moteur de Jeu (MVP)
 *L'objectif est d'avoir la logique algorithmique pure du jeu 2048 fonctionnelle en arrière-plan.*
 
-- [x] **STORY-01 : Initialisation de la grille**
+- [ ] **STORY-01 : Initialisation de la grille**
   - Initialiser une matrice de 4x4.
   - Placer deux tuiles aléatoires (90% de chance d'avoir un `2`, 10% de chance d'avoir un `4`) sur des cases vides au démarrage.
 - [ ] **STORY-02 : Logique des 4 directions (Mouvements & Fusions)**
