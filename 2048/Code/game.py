@@ -155,3 +155,19 @@ if __name__ == "__main__":
     # 3. On affiche la grille
     print("Grille de départ :")
     jeu.print_board()
+
+    # --- SIMULATION DU JEU ET TEST DE LA TÂCHE 4 ---
+    
+    print("\n--- Le joueur fait un mouvement vers la GAUCHE ---")
+    # On stocke le résultat du mouvement (True si la grille a changé, False sinon)
+    grille_a_bouge = jeu.move_left() 
+
+    # Tâche 4 : Sécurisation de l'apparition de la nouvelle tuile
+    if grille_a_bouge:
+        print("La grille a été modifiée ! Apparition d'une nouvelle tuile.")
+        jeu.add_random_tile()
+    else:
+        print("Mouvement dans le vide. La grille n'a pas bougé, aucune tuile n'est ajoutée.")
+
+    # On affiche le résultat
+    jeu.print_board()
