@@ -74,6 +74,49 @@ class Game2048:
                 resultat[i + 1] = 0
 
         return resultat
+    
+
+    def move_left(self):
+        """
+        Applique le glissement et la fusion vers la GAUCHE sur toute la grille.
+        Retourne True si la grille a été modifiée, False sinon.
+        """
+        moved = False
+        for i in range(4):
+            ligne_originale = self.grid[i].copy()
+
+            etape1 = self.slide_ligne(ligne_originale)
+            etape2 = self.fusionne_ligne(etape1)
+            ligne_finale = self.slide_ligne(etape2)
+
+            self.grid[i] = ligne_finale
+
+            if ligne_originale != ligne_finale:
+                moved = True
+        return moved
+
+    def move_right(self):
+        """
+        Applique le mouvement vers la DROITE en inversant les lignes.
+        Retourne True si la grille a été modifiée.
+        """
+        moved = False
+        for i in range(4):
+            ligne_originale = self.grid[i].copy()
+
+            ligne_inversee = ligne_originale[::-1]
+            
+            etape1 = self.slide_ligne(ligne_inversee)
+            etape2 = self.fusionne_ligne(etape1)
+            ligne_finale_inversee = self.slide_ligne(etape2)
+
+            ligne_finale = ligne_finale_inversee[::-1]
+
+            self.grid[i] = ligne_finale
+
+            if ligne_originale != ligne_finale:
+                moved = True
+        return moved
 
 
 if __name__ == "__main__":
