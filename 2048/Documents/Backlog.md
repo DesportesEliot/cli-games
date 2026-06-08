@@ -8,7 +8,7 @@ Ce backlog définit la feuille de route pour l'implémentation du jeu 2048 en mo
 *Objectif : Mettre en place les fondations algorithmiques du jeu (grille et mouvements).*
 
 ### [STORY-01] Initialisation de la grille et affichage de base
-- [ ] **Tâche 1 :** Créer la structure de données pour la grille (matrice `[4][4]int`).
+- [ ] **Tâche 1 :** Créer la structure de données pour la grille (une liste de listes 4x4 remplie de zéros).
 - [ ] **Tâche 2 :** Écrire la fonction `AddRandomTile()` pour générer un `2` ou un `4` aléatoirement.
 - [ ] **Tâche 3 :** Créer la fonction `Print()` pour dessiner la grille en texte brut.
 - [ ] **Tâche 4 :** Implémenter la logique de base du déplacement vers la gauche (`slideLigne` et `fusionneLigne`).
@@ -31,7 +31,7 @@ Ce backlog définit la feuille de route pour l'implémentation du jeu 2048 en mo
 
 ### [STORY-04] Boucle de jeu brute (Saisie Standard)
 - [ ] **Tâche 1 :** Créer la boucle `for` principale dans `main()`.
-- [ ] **Tâche 2 :** Utiliser `fmt.Scanln()` pour la saisie (ex: 'z'=haut, 's'=bas, 'q'=gauche, 'd'=droite).
+- [ ] **Tâche 2 :** Utiliser `input()` pour la saisie (ex: 'z'=haut, 's'=bas, 'q'=gauche, 'd'=droite).
 - [ ] **Tâche 3 :** Brancher les saisies sur les fonctions de déplacement correspondantes.
 - [ ] **Tâche 4 :** Gérer l'arrêt de la boucle avec les messages "Gagné !" ou "Game Over !".
 
@@ -41,9 +41,9 @@ Ce backlog définit la feuille de route pour l'implémentation du jeu 2048 en mo
 *Objectif : Supprimer la touche "Entrée" et rendre l'affichage fluide et dynamique.*
 
 ### [STORY-05] Capture instantanée du clavier (Mode Raw)
-- [ ] **Tâche 1 :** Importer une bibliothèque CLI (ex: `nsf/termbox-go` ou `gdamore/tcell`).
+- [ ] **Tâche 1 :** Importer une bibliothèque CLI.
 - [ ] **Tâche 2 :** Initialiser la bibliothèque et écouter les événements clavier en continu.
-- [ ] **Tâche 3 :** Remplacer `fmt.Scanln` par la capture directe des flèches directionnelles.
+- [ ] **Tâche 3 :** Remplacer le `input()` par la capture directe des flèches directionnelles.
 
 ### [STORY-06] Rafraîchissement propre de l'écran
 - [ ] **Tâche 1 :** Implémenter une fonction de nettoyage d'écran adaptée à la librairie choisie.
