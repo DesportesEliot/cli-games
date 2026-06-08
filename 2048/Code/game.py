@@ -30,3 +30,34 @@ class Game2048:
         self.grid[row][col] = 2 if random.random() < 0.9 else 4
 
         return True    
+    
+
+    def print_board(self):
+        """
+        Affiche la grille de jeu en texte brut dans la console.
+        Tâche 3 : Dessiner la grille en texte brut.
+        """
+        print("+------+------+------+------+")
+        for row in self.grid:
+            for cell in row:
+                if cell == 0:
+                    print("|      ", end="")
+                else:
+                    print(f"| {cell:4d} ", end="")
+            
+            print("|")
+            print("+------+------+------+------+")
+
+    
+
+if __name__ == "__main__":
+    # 1. On initialise le jeu 
+    jeu = Game2048()
+        
+    # 2. On ajoute deux tuiles de départ, comme dans le vrai jeu 
+    jeu.add_random_tile()
+    jeu.add_random_tile()
+    
+    # 3. On affiche la grille 
+    print("Grille de départ :")
+    jeu.print_board()
