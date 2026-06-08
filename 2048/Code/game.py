@@ -124,6 +124,25 @@ class Game2048:
        """
        self.grid = [list(row) for row in zip(*self.grid)]
  
+    def move_up(self):
+        """
+        Applique le mouvement vers le HAUT.
+        Retourne True si la grille a été modifiée.
+        """
+        self.transpose_matrix()
+        moved = self.move_left()
+        self.transpose_matrix()
+        return moved
+
+    def move_down(self):
+        """
+        Applique le mouvement vers le BAS.
+        Retourne True si la grille a été modifiée.
+        """
+        self.transpose_matrix()
+        moved = self.move_right()
+        self.transpose_matrix()
+        return moved
 
 if __name__ == "__main__":
     # 1. On initialise le jeu
