@@ -117,7 +117,13 @@ class Game2048:
             if ligne_originale != ligne_finale:
                 moved = True
         return moved
-
+    def transpose_matrix(self):
+       """
+    Transpose la grille.
+    Les lignes deviennent des colonnes.
+       """
+       self.grid = [list(row) for row in zip(*self.grid)]
+ 
 
 if __name__ == "__main__":
     # 1. On initialise le jeu
