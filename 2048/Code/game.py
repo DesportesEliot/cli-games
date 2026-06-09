@@ -8,6 +8,19 @@ class Game2048:
         """
         self.grid = [[0 for _ in range(4)] for _ in range(4)]
         self.score = 0
+        self.colors = {
+    2: "\033[97m",      # Blanc
+    4: "\033[93m",      # Jaune
+    8: "\033[91m",      # Rouge clair
+    16: "\033[31m",     # Rouge
+    32: "\033[35m",     # Magenta
+    64: "\033[95m",     # Rose
+    128: "\033[92m",    # Vert
+    256: "\033[96m",    # Cyan
+    512: "\033[94m",    # Bleu
+    1024: "\033[34m",   # Bleu foncé
+    2048: "\033[33m"    # Or/Jaune foncé
+}
 
     def get_grid(self):
         """Retourne la grille actuelle."""
