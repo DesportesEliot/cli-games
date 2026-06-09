@@ -45,20 +45,30 @@ class Game2048:
 
     def print_board(self):
         """
-        Affiche la grille de jeu en texte brut et le score actuel.
+        Affiche la grille de jeu avec des bordures Unicode et le score actuel.
         """
-        print(f"Score : {self.score}") # Affichage du score
-        print("+------+------+------+------+")
-        for row in self.grid:
+        print(f"Score : {self.score}\n") 
+        
+        # Ligne du haut : ╔══════╦══════╦══════╦══════╗
+        print("╔" + "══════╦" * 3 + "══════╗")
+        
+        for i, row in enumerate(self.grid):
             for cell in row:
                 if cell == 0:
-                    print("|      ", end="")
+                    print("║      ", end="")
                 else:
-                 color = self.colors.get(cell, "\033[0m")
-                 reset = "\033[0m"
-                 print(f"| {color}{cell:4d}{reset} ", end="")
-            print("|")
-            print("+------+------+------+------+")
+                    color = self.colors.get(cell, "\033[0m")
+                    reset = "\033[0m"
+                    print(f"║ {color}{cell:4d}{reset} ", end="")
+            print("║") # Ferme la ligne à droite
+            
+            # Ligne de séparation (sauf pour la toute dernière ligne)
+            if i < 3:
+                # Séparation du milieu : ╠══════╬══════╬══════╬══════╣
+                print("╠" + "══════╬" * 3 + "══════╣")
+            else:
+                # Ligne du bas : ╚══════╩══════╩══════╩══════╝
+                print("╚" + "══════╩" * 3 + "══════╝")
 
     def slide_ligne(self, ligne):
         """
