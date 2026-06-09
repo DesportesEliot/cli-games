@@ -54,7 +54,9 @@ class Game2048:
                 if cell == 0:
                     print("|      ", end="")
                 else:
-                    print(f"| {cell:4d} ", end="")
+                 color = self.colors.get(cell, "\033[0m")
+                 reset = "\033[0m"
+                 print(f"| {color}{cell:4d}{reset} ", end="")
             print("|")
             print("+------+------+------+------+")
 
@@ -237,5 +239,3 @@ if __name__ == "__main__":
             jeu.add_random_tile()
         elif action in ['z', 'q', 's', 'd']: # Si on a tapé une bonne touche mais que ça n'a pas bougé
             print("👉 Déplacement impossible dans cette direction.\n")
-
-     
