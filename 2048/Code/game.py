@@ -99,7 +99,7 @@ class Game2048:
         Transpose la grille. Les lignes deviennent des colonnes.
         """
         self.grid = [list(row) for row in zip(*self.grid)]
- 
+
     def move_up(self):
         """
         Applique le mouvement vers le HAUT.
@@ -159,30 +159,48 @@ class Game2048:
 if __name__ == "__main__":
     jeu = Game2048()
 
-    # --- SIMULATION GRILLE CLASSIQUE ---
+    # Initialisation classique : 2 tuiles de départ
     jeu.add_random_tile()
     jeu.add_random_tile()
-    print("--- Test de l'état initial ---")
-    jeu.print_board()
-    
-    if jeu.est_bloque():
-        print("❌ Game Over ! (Ce serait bizarre dès le début...)")
-    else:
-        print("✅ Le jeu n'est pas bloqué, on peut jouer !\n")
 
-    # --- SIMULATION GRILLE BLOQUÉE (Game Over) ---
-    print("--- On triche et on crée une grille totalement bloquée ---")
+    print("=== BIENVENUE DANS 2048 ===")
 
-    jeu.grid = [
-        [2, 4, 2, 4],
-        [4, 2, 4, 2],
-        [2, 4, 2, 4],
-        [4, 2, 4, 2]
-    ]
+    # Tâche 2 : Boucle de jeu utilisant input()
+    while True:
+        jeu.print_board()
 
-    jeu.print_board()
+        # Vérification des conditions de fin de jeu
+        if jeu.est_victoire():
+            print("🏆 Victoire ! Vous avez atteint 2048 !")
+            break
 
-    if jeu.est_game_over():
-        print("❌ Game Over ! La grille est pleine et bloquée.")
-    else:
-        print("✅ Il y a un bug, la grille devrait être bloquée !")
+        if jeu.est_game_over():
+            print("❌ Game Over ! La grille est pleine et bloquée.")
+            break
+
+        # Saisie utilisateur sécurisée
+        action = input("Jouez (z=haut, s=bas, q=gauche, d=droite) ou 'quit' pour arrêter : ").lower()
+
+        moved = False
+
+        if action == 'z':
+            moved = jeu.move_up()
+        elif action == 's':
+            moved = jeu.move_down()
+        elif action == 'q':
+            moved = jeu.move_left()
+        elif action == 'd':
+            moved = jeu.move_right()
+        elif action == 'quit':
+            print("Partie interrompue.")
+            break
+        else:
+            print("⚠️ Commande non reconnue. Utilisez z, q, s, d.")
+            continue  # Relance la boucle sans faire pop une nouvelle tuile
+
+        # Si le mouvement est valide, on ajoute une nouvelle tuile
+        if moved:
+            jeu.add_random_tile()
+        else:
+            print("👉 Déplacement impossible dans cette direction.")
+            print("\n")
