@@ -8,36 +8,33 @@ Ce backlog définit la feuille de route pour l'implémentation du jeu 2048 en mo
 *Objectif : Mettre en place les fondations algorithmiques du jeu (grille et mouvements).*
 
 ### [STORY-01] Initialisation de la grille et affichage de base
-- [ ] **Tâche 1 :** Créer la structure de données pour la grille (une liste de listes 4x4 remplie de zéros).
-- [ ] **Tâche 2 :** Écrire la fonction `AddRandomTile()` pour générer un `2` ou un `4` aléatoirement.
-- [ ] **Tâche 3 :** Créer la fonction `Print()` pour dessiner la grille en texte brut.
-- [ ] **Tâche 4 :** Implémenter la logique de base du déplacement vers la gauche (`slideLigne` et `fusionneLigne`).
+- [x] **Tâche 1 :** Créer la structure de données pour la grille (une liste de listes 4x4 remplie de zéros).
+- [x] **Tâche 2 :** Écrire la fonction `AddRandomTile()` pour générer un `2` ou un `4` aléatoirement.
+- [x] **Tâche 3 :** Créer la fonction `Print()` pour dessiner la grille en texte brut.
+- [x] **Tâche 4 :** Implémenter la logique de base du déplacement vers la gauche (`slideLigne` et `fusionneLigne`).
 
 ### [STORY-02] Logique des 4 directions
-- [ ] **Tâche 1 :** Créer une fonction `InverserLignes()` (pour le mouvement Droite).
-- [ ] **Tâche 2 :** Créer une fonction `TransposerMatrice()` (pour les mouvements Haut/Bas).
-- [ ] **Tâche 3 :** Implémenter `DeplacerDroite()`, `DeplacerHaut()` et `DeplacerBas()`.
-- [ ] **Tâche 4 :** Sécuriser `AddRandomTile()` pour qu'elle ne se déclenche que si la grille a bougé.
+- [x] **Tâche 1 :** Créer une fonction `InverserLignes()` (pour le mouvement Droite).
+- [x] **Tâche 2 :** Créer une fonction `TransposerMatrice()` (pour les mouvements Haut/Bas).
+- [x] **Tâche 3 :** Implémenter `DeplacerDroite()`, `DeplacerHaut()` et `DeplacerBas()`.
+- [x] **Tâche 4 :** Sécuriser `AddRandomTile()` pour qu'elle ne se déclenche que si la grille a bougé.
 
----
-
-## 🏃‍♂️ Sprint 2 : Règles du Jeu & Jouabilité Brute
 *Objectif : Ajouter les conditions de victoire/défaite et rendre le jeu jouable au tour par tour.*
 
 ### [STORY-03] Conditions de Fin de Partie (Victoire & Défaite)
-- [ ] **Tâche 1 :** Créer `EstVictoire() bool` qui cherche la tuile `2048`.
-- [ ] **Tâche 2 :** Créer `EstBloque() bool` qui vérifie si la grille est pleine ET sans fusion possible.
-- [ ] **Tâche 3 :** Créer `EstGameOver() bool` pour valider la défaite totale.
+- [x] **Tâche 1 :** Créer `EstVictoire() bool` qui cherche la tuile `2048`.
+- [x] **Tâche 2 :** Créer `EstBloque() bool` qui vérifie si la grille est pleine ET sans fusion possible.
+- [x] **Tâche 3 :** Créer `EstGameOver() bool` pour valider la défaite totale.
 
 ### [STORY-04] Boucle de jeu brute (Saisie Standard)
-- [ ] **Tâche 1 :** Créer la boucle `for` principale dans `main()`.
-- [ ] **Tâche 2 :** Utiliser `input()` pour la saisie (ex: 'z'=haut, 's'=bas, 'q'=gauche, 'd'=droite).
-- [ ] **Tâche 3 :** Brancher les saisies sur les fonctions de déplacement correspondantes.
-- [ ] **Tâche 4 :** Gérer l'arrêt de la boucle avec les messages "Gagné !" ou "Game Over !".
+- [x] **Tâche 1 :** Créer la boucle `for` principale dans `main()`.
+- [x] **Tâche 2 :** Utiliser `input()` pour la saisie (ex: 'z'=haut, 's'=bas, 'q'=gauche, 'd'=droite).
+- [x] **Tâche 3 :** Brancher les saisies sur les fonctions de déplacement correspondantes.
+- [x] **Tâche 4 :** Gérer l'arrêt de la boucle avec les messages "Gagné !" ou "Game Over !".
 
 ---
 
-## 🏃‍♂️ Sprint 3 : Expérience Terminal (Temps Réel)
+## 🏃‍♂️ Sprint 2 : Expérience Terminal (Temps Réel)
 *Objectif : Supprimer la touche "Entrée" et rendre l'affichage fluide et dynamique.*
 
 ### [STORY-05] Capture instantanée du clavier (Mode Raw)
@@ -54,9 +51,6 @@ Ce backlog définit la feuille de route pour l'implémentation du jeu 2048 en mo
 - [ ] **Tâche 2 :** Faire en sorte que les fusions additionnent les valeurs au score global.
 - [ ] **Tâche 3 :** Afficher le score mis à jour au-dessus de la grille à chaque frame.
 
----
-
-## 🏃‍♂️ Sprint 4 : Finitions Visuelles & Standard Open Source
 *Objectif : Rendre le jeu visuellement attractif et prêt à être partagé sur GitHub.*
 
 ### [STORY-08] Couleurs ANSI & Design de la grille
