@@ -32,8 +32,9 @@ class Game2048:
 
     def print_board(self):
         """
-        Affiche la grille de jeu en texte brut dans la console.
+        Affiche la grille de jeu en texte brut et le score actuel.
         """
+        print(f"Score : {self.score}") # Affichage du score
         print("+------+------+------+------+")
         for row in self.grid:
             for cell in row:
@@ -55,12 +56,13 @@ class Game2048:
 
     def fusionne_ligne(self, ligne):
         """
-        Fusionne les cases identiques adjacentes.
+        Fusionne les cases identiques adjacentes et met à jour le score.
         """
         resultat = ligne.copy()
         for i in range(len(resultat) - 1):
             if resultat[i] != 0 and resultat[i] == resultat[i + 1]:
                 resultat[i] *= 2
+                self.score += resultat[i]  # <-- AJOUT : On ajoute les points au score !
                 resultat[i + 1] = 0
         return resultat
     
