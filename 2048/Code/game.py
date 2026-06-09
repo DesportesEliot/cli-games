@@ -95,6 +95,7 @@ class Game2048:
             if resultat[i] != 0 and resultat[i] == resultat[i + 1]:
                 resultat[i] *= 2
                 self.score += resultat[i]  # <-- AJOUT : On ajoute les points au score !
+                self.save_highscore()
                 resultat[i + 1] = 0
         return resultat
     
@@ -197,6 +198,18 @@ class Game2048:
           """
          os.system('cls' if os.name == 'nt' else 'clear')
     
+    def save_highscore(self):
+        """
+          Sauvegarde le nouveau record si le score actuel est supérieur.
+        """
+        if self.score > self.highscore:
+         self.highscore = self.score
+
+    
+         with open(".2048_highscore", "w") as f:
+               f.write(str(self.highscore))
+
+
 
 
 if __name__ == "__main__":
