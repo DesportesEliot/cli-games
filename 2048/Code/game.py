@@ -202,5 +202,5 @@ if __name__ == "__main__":
         if moved:
             jeu.add_random_tile()
         else:
-            print("👉 Déplacement impossible dans cette direction.")
+            print(" Déplacement impossible dans cette direction.")
             print("\n")
