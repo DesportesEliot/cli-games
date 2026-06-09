@@ -143,6 +143,17 @@ class Game2048:
         moved = self.move_right()
         self.transpose_matrix()
         return moved
+    
+    def est_victoire(self):
+        """
+        Vérifie si le joueur a atteint la tuile 2048.
+        Tâche 1 (#26) : Cherche la tuile 2048 dans la grille.
+        Retourne True si elle est trouvée, False sinon.
+        """
+        for ligne in self.grid:
+            if 2048 in ligne:
+                return True
+        return False
 
 if __name__ == "__main__":
     # 1. On initialise le jeu
@@ -152,22 +163,22 @@ if __name__ == "__main__":
     jeu.add_random_tile()
     jeu.add_random_tile()
 
-    # 3. On affiche la grille
-    print("Grille de départ :")
+    print("--- Test de l'état initial ---")
     jeu.print_board()
-
-    # --- SIMULATION DU JEU ET TEST DE LA TÂCHE 4 ---
     
-    print("\n--- Le joueur fait un mouvement vers la GAUCHE ---")
-    # On stocke le résultat du mouvement (True si la grille a changé, False sinon)
-    grille_a_bouge = jeu.move_left() 
-
-    # Tâche 4 : Sécurisation de l'apparition de la nouvelle tuile
-    if grille_a_bouge:
-        print("La grille a été modifiée ! Apparition d'une nouvelle tuile.")
-        jeu.add_random_tile()
+    # On vérifie si on a gagné (devrait être False)
+    if jeu.est_victoire():
+        print("🏆 Victoire ! (C'est inattendu si tôt...)")
     else:
-        print("Mouvement dans le vide. La grille n'a pas bougé, aucune tuile n'est ajoutée.")
+        print("Pas encore de victoire, on continue de jouer.\n")
 
-    # On affiche le résultat
+    # --- SIMULATION D'UNE VICTOIRE ---
+    print("--- On triche et on place un 2048 en bas à droite ---")
+    jeu.grid[3][3] = 2048
     jeu.print_board()
+
+    # On vérifie à nouveau si on a gagné (devrait être True)
+    if jeu.est_victoire():
+        print("🏆 Victoire ! La tuile 2048 a été trouvée !")
+    else:
+        print("Pas de victoire... Il y a un bug !")
