@@ -190,6 +190,7 @@ if __name__ == "__main__":
         action = input("Jouez (z=haut, s=bas, q=gauche, d=droite) ou 'quit' pour arrêter : ").lower()
 
         moved = False
+        msg_erreur = ""
 
         if action == 'z':
             moved = jeu.move_up()
@@ -203,14 +204,22 @@ if __name__ == "__main__":
             print("Partie interrompue.")
             break
         else:
-            print("⚠️ Commande non reconnue. Utilisez z, q, s, d.")
-            continue  # Relance la boucle sans faire pop une nouvelle tuile
+            msg_erreur = "⚠️ Commande non reconnue. Utilisez z, q, s, d."
+
+        # On nettoie l'écran ici, juste avant de potentiellement rajouter une tuile et de reboucler   
+        jeu.clear_screen()
+
+        # On réaffiche le message de bienvenue en haut pour faire propre
+        print("=== BIENVENUE DANS 2048 ===")
+
+        if msg_erreur:
+            print(msg_erreur)
+            continue
 
         # Si le mouvement est valide, on ajoute une nouvelle tuile
         if moved:
             jeu.add_random_tile()
-        else:
-            print(" Déplacement impossible dans cette direction.")
-            print("\n")
+        elif action in ['z', 'q', 's', 'd']: # Si on a tapé une bonne touche mais que ça n'a pas bougé
+            print("👉 Déplacement impossible dans cette direction.\n")
 
      
