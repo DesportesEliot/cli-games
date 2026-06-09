@@ -169,7 +169,7 @@ if __name__ == "__main__":
     while True:
         jeu.print_board()
 
-        # Vérification des conditions de fin de jeu
+        # Vérification des conditions de fin de jeu 
         if jeu.est_victoire():
             print("🏆 Victoire ! Vous avez atteint 2048 !")
             break
