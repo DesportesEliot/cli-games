@@ -8,6 +8,13 @@ class Game2048:
         """
         self.grid = [[0 for _ in range(4)] for _ in range(4)]
         self.score = 0
+        self.highscore = 0
+
+        if os.path.exists(".2048_highscore"):
+            with open(".2048_highscore", "r") as f:
+                contenu = f.read().strip()
+            if contenu.isdigit():
+                self.highscore = int(contenu)
         self.colors = {
     2: "\033[97m",      # Blanc
     4: "\033[93m",      # Jaune
