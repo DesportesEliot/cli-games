@@ -54,7 +54,7 @@ class Game2048:
         """
         Affiche la grille de jeu avec des bordures Unicode et le score actuel.
         """
-        print(f"Score : {self.score}\n") 
+        print(f"Score : {self.score}   │   Meilleur Score : {self.highscore}\n")
         
         # Ligne du haut : ╔══════╦══════╦══════╦══════╗
         print("╔" + "══════╦" * 3 + "══════╗")
