@@ -1,4 +1,5 @@
 import random
+import os
 
 class Game2048:
     def __init__(self):
@@ -154,6 +155,13 @@ class Game2048:
         Vérifie si la partie est terminée par défaite.
         """
         return self.est_bloque()
+    
+    def clear_screen(self):
+         """
+         Nettoie le terminal.
+          """
+         os.system('cls' if os.name == 'nt' else 'clear')
+    
 
 
 if __name__ == "__main__":
@@ -204,3 +212,5 @@ if __name__ == "__main__":
         else:
             print(" Déplacement impossible dans cette direction.")
             print("\n")
+
+     
