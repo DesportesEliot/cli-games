@@ -4,7 +4,7 @@ Ce backlog définit la feuille de route pour l'implémentation du jeu 2048 en mo
 
 ---
 
-## 🏃‍♂️ Sprint 1 : Mécanique de Base (Le Moteur Mathématique)
+## 🏃‍♂️ Sprint 1 : 2048
 *Objectif : Mettre en place les fondations algorithmiques du jeu (grille et mouvements).*
 
 ### [STORY-01] Initialisation de la grille et affichage de base
@@ -32,9 +32,6 @@ Ce backlog définit la feuille de route pour l'implémentation du jeu 2048 en mo
 - [x] **Tâche 3 :** Brancher les saisies sur les fonctions de déplacement correspondantes.
 - [x] **Tâche 4 :** Gérer l'arrêt de la boucle avec les messages "Gagné !" ou "Game Over !".
 
----
-
-## 🏃‍♂️ Sprint 2 : Expérience Terminal (Temps Réel)
 *Objectif : Supprimer la touche "Entrée" et rendre l'affichage fluide et dynamique.*
 
 ### [STORY-05] Capture instantanée du clavier (Mode Raw)
