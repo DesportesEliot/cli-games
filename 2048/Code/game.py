@@ -129,29 +129,31 @@ class Game2048:
 
     def est_bloque(self):
         """
-        Tâche 2 : Vérifie si la grille est pleine ET qu'aucune fusion n'est possible.
+        Vérifie si la grille est pleine ET qu'aucune fusion n'est possible.
         Retourne True si le joueur a perdu (Game Over), False sinon.
         """
-        # 1. On cherche s'il y a des cases vides
         for row in range(4):
             for col in range(4):
                 if self.grid[row][col] == 0:
-                    return False  # La grille n'est pas pleine
+                    return False
 
-        # 2. On vérifie les fusions possibles horizontalement
         for row in range(4):
-            for col in range(3): # On va jusqu'à 3 pour éviter de dépasser la grille avec col+1
+            for col in range(3):
                 if self.grid[row][col] == self.grid[row][col + 1]:
-                    return False  # Fusion possible !
+                    return False
 
-        # 3. On vérifie les fusions possibles verticalement
         for col in range(4):
-            for row in range(3): # Pareil, on va jusqu'à 3
+            for row in range(3):
                 if self.grid[row][col] == self.grid[row + 1][col]:
-                    return False  # Fusion possible !
+                    return False
 
-        # Si on arrive jusqu'ici, c'est qu'il n'y a ni case vide, ni fusion possible.
         return True
+
+    def est_game_over(self):
+        """
+        Vérifie si la partie est terminée par défaite.
+        """
+        return self.est_bloque()
 
 
 if __name__ == "__main__":
@@ -170,16 +172,17 @@ if __name__ == "__main__":
 
     # --- SIMULATION GRILLE BLOQUÉE (Game Over) ---
     print("--- On triche et on crée une grille totalement bloquée ---")
-    # Une disposition en damier où aucune case adjacente n'est identique
+
     jeu.grid = [
         [2, 4, 2, 4],
         [4, 2, 4, 2],
         [2, 4, 2, 4],
         [4, 2, 4, 2]
     ]
+
     jeu.print_board()
 
-    if jeu.est_bloque():
+    if jeu.est_game_over():
         print("❌ Game Over ! La grille est pleine et bloquée.")
     else:
         print("✅ Il y a un bug, la grille devrait être bloquée !")
