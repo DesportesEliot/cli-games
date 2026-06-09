@@ -34,28 +34,23 @@ Ce backlog définit la feuille de route pour l'implémentation du jeu 2048 en mo
 
 *Objectif : Supprimer la touche "Entrée" et rendre l'affichage fluide et dynamique.*
 
-### [STORY-05] Capture instantanée du clavier (Mode Raw)
-- [ ] **Tâche 1 :** Importer une bibliothèque CLI.
-- [ ] **Tâche 2 :** Initialiser la bibliothèque et écouter les événements clavier en continu.
-- [ ] **Tâche 3 :** Remplacer le `input()` par la capture directe des flèches directionnelles.
-
-### [STORY-06] Rafraîchissement propre de l'écran
+### [STORY-05] Rafraîchissement propre de l'écran
 - [ ] **Tâche 1 :** Implémenter une fonction de nettoyage d'écran adaptée à la librairie choisie.
 - [ ] **Tâche 2 :** Nettoyer le terminal avant chaque frame pour empêcher l'empilement du texte.
 
-### [STORY-07] Gestion du Score en temps réel
+### [STORY-06] Gestion du Score en temps réel
 - [ ] **Tâche 1 :** Ajouter une variable `Score`.
 - [ ] **Tâche 2 :** Faire en sorte que les fusions additionnent les valeurs au score global.
 - [ ] **Tâche 3 :** Afficher le score mis à jour au-dessus de la grille à chaque frame.
 
 *Objectif : Rendre le jeu visuellement attractif et prêt à être partagé sur GitHub.*
 
-### [STORY-08] Couleurs ANSI & Design de la grille
+### [STORY-07] Couleurs ANSI & Design de la grille
 - [ ] **Tâche 1 :** Associer chaque valeur (2, 4, 8, 16...) à un code couleur spécifique.
 - [ ] **Tâche 2 :** Appliquer ces couleurs lors du rendu pour une lisibilité instantanée.
 - [ ] **Tâche 3 :** Utiliser des caractères "Box Drawing" unicode (ex: `╔═╗`) pour de belles bordures.
 
-### [STORY-09] Système de High Score persistant
+### [STORY-08] Système de High Score persistant
 - [ ] **Tâche 1 :** Lire un fichier local `.2048_highscore` au démarrage.
 - [ ] **Tâche 2 :** Sauvegarder le nouveau record dans ce fichier si le joueur se surpasse.
 - [ ] **Tâche 3 :** Afficher le "Meilleur Score" sur l'interface de jeu.
