@@ -105,6 +105,17 @@ class Connect4:
 
         return False
 
+    def verifier_match_nul(self):
+      """
+       Vérifie si la grille est pleine.
+       Retourne True si aucune case vide n'est présente.
+       """
+      for ligne in self.grid:
+         if 0 in ligne:
+            return False
+
+      return True
+
 
 # --- ZONE DE TEST ---
 if __name__ == "__main__":
@@ -125,4 +136,20 @@ if __name__ == "__main__":
     print("\n--- Joueur O joue dans la colonne 0 ---")
     jeu.placer_jeton(0)
     jeu.afficher_grille()
+    print("\n--- Test Match Nul ---")
 
+    jeu.grid = [
+       ["X", "O", "X", "O", "X", "O", "X"],
+       ["O", "X", "O", "X", "O", "X", "O"],
+       ["X", "O", "X", "O", "X", "O", "X"],
+       ["O", "X", "O", "X", "O", "X", "O"],
+       ["X", "O", "X", "O", "X", "O", "X"],
+       ["O", "X", "O", "X", "O", "X", "O"]
+     ]
+
+    jeu.afficher_grille()
+
+    if jeu.verifier_match_nul():
+     print("Match nul détecté !")
+    else:
+     print("La partie peut continuer.")
