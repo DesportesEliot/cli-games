@@ -88,32 +88,44 @@ class Connect4:
 
     def afficher_grille(self, col_curseur=-1):
         """
-        Affiche la grille avec couleurs ANSI et caractères Unicode.
+        Affiche la grille élargie (façon carrée) pour corriger le ratio du terminal
+        et aligne parfaitement le curseur ▼ au centre de la colonne.
         """
+        # Formule magique : le centre de la colonne 'c' est exactement à l'index (2 + 4 * c)
         if col_curseur != -1:
-            print("  " + "  " * col_curseur + "▼")
+            print(" " * (2 + 4 * col_curseur) + "▼")
         else:
             print()
 
-        print("┌─┬─┬─┬─┬─┬─┬─┐")
+        # Bordure supérieure élargie (3 lignes horizontales par case)
+        print("┌───┬───┬───┬───┬───┬───┬───┐")
 
         for i, row in enumerate(self.grid):
             ligne = []
             for j, cell in enumerate(row):
                 if (i, j) in self.winning_cells:
-                    ligne.append(f"\033[92m●{RESET}")  # Vert pour l'alignement gagnant
+                    token = f"\033[92m●{RESET}"  # Vert pour la victoire
                 elif cell == "X":
-                    ligne.append(f"{RED}●{RESET}")
+                    token = f"{RED}●{RESET}"
                 elif cell == "O":
-                    ligne.append(f"{YELLOW}●{RESET}")
+                    token = f"{YELLOW}●{RESET}"
                 else:
-                    ligne.append(" ")
+                    token = " "  # Case vide
+                
+                # On entoure le jeton d'un espace à gauche et à droite pour faire un carré
+                ligne.append(f" {token} ")
+            
+            # On assemble la ligne avec les séparateurs verticaux
             print("│" + "│".join(ligne) + "│")
+            
+            # Lignes de séparation internes
             if i < 5:
-                print("├─┼─┼─┼─┼─┼─┼─┤")
+                print("├───┼───┼───┼───┼───┼───┼───┤")
 
-        print("└─┴─┴─┴─┴─┴─┴─┘")
-        print(" 0 1 2 3 4 5 6")
+        # Bordure inférieure
+        print("└───┴───┴───┴───┴───┴───┴───┘")
+        # On espace aussi les numéros du bas pour coller au nouveau design
+        print("  0   1   2   3   4   5   6 ")
   
     def placer_jeton(self, colonne):
         """
