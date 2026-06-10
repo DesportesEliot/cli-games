@@ -106,50 +106,67 @@ class Connect4:
         return False
 
     def verifier_match_nul(self):
-      """
-       Vérifie si la grille est pleine.
-       Retourne True si aucune case vide n'est présente.
-       """
-      for ligne in self.grid:
-         if 0 in ligne:
-            return False
+        """
+        Vérifie si la grille est pleine.
+        Retourne True si aucune case vide n'est présente.
+        """
+        for ligne in self.grid:
+            if 0 in ligne:
+                return False
 
-      return True
+        return True
+
+    def jouer(self):
+        """
+        STORY-02 - Tâche 3 : Boucle de jeu principale.
+        Gère les tours des joueurs, les saisies de colonne et la fin de la partie.
+        """
+        print("--- Début de la partie de Puissance 4 ! ---")
+        
+        while True:
+            # 1. On affiche l'état actuel de la grille
+            print("\n")
+            self.afficher_grille()
+            print(f"C'est au tour du joueur {self.current_player}.")
+
+            # 2. Boucle de saisie avec gestion des erreurs
+            colonne_choisie = -1
+            while True:
+                saisie = input("Choisissez une colonne (0-6) : ").strip()
+                
+                # Vérification si la saisie est bien un nombre entier
+                if not saisie.isdigit():
+                    print("Erreur : Veuillez entrer un nombre valide entre 0 et 6.")
+                    continue
+                
+                colonne_choisie = int(saisie)
+                
+                # Tentative de placement du jeton (vérifie en même temps si l'index est valide et la colonne non pleine)
+                if self.placer_jeton(colonne_choisie):
+                    break # Placement réussi, on quitte la boucle de saisie
+                else:
+                    print("Erreur : Colonne pleine ou invalide (hors limites). Réessayez.")
+
+            # 3. Vérification si le coup actuel entraîne une victoire
+            if self.verifier_victoire():
+                print("\n")
+                self.afficher_grille()
+                print(f"Félicitations ! Le joueur {self.current_player} a gagné la partie !")
+                break
+
+            # 4. Vérification si le coup actuel entraîne un match nul
+            if self.verifier_match_nul():
+                print("\n")
+                self.afficher_grille()
+                print("Match nul ! La grille est pleine.")
+                break
+
+            # 5. Changement de joueur pour le tour suivant
+            self.switch_player()
 
 
 # --- ZONE DE TEST ---
 if __name__ == "__main__":
     jeu = Connect4()
-
-    print("--- Grille initiale vide ---")
-    jeu.afficher_grille()
-
-    print("\n--- Joueur X joue dans la colonne 3 ---")
-    jeu.placer_jeton(3)
-    jeu.afficher_grille()
-
-    print("\n--- Changement de joueur et Joueur O joue AUSSI dans la colonne 3 ---")
-    jeu.switch_player()
-    jeu.placer_jeton(3) # Devrait s'empiler au-dessus du X
-    jeu.afficher_grille()
-
-    print("\n--- Joueur O joue dans la colonne 0 ---")
-    jeu.placer_jeton(0)
-    jeu.afficher_grille()
-    print("\n--- Test Match Nul ---")
-
-    jeu.grid = [
-       ["X", "O", "X", "O", "X", "O", "X"],
-       ["O", "X", "O", "X", "O", "X", "O"],
-       ["X", "O", "X", "O", "X", "O", "X"],
-       ["O", "X", "O", "X", "O", "X", "O"],
-       ["X", "O", "X", "O", "X", "O", "X"],
-       ["O", "X", "O", "X", "O", "X", "O"]
-     ]
-
-    jeu.afficher_grille()
-
-    if jeu.verifier_match_nul():
-     print("Match nul détecté !")
-    else:
-     print("La partie peut continuer.")
+    # Lancement de la boucle principale du jeu
+    jeu.jouer()
