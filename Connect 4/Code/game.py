@@ -50,12 +50,8 @@ class Connect4:
         """
         Initialise une partie de Puissance 4.
         """
-        # Grille 6x7 remplie de 0
         self.grid = [[0 for _ in range(7)] for _ in range(6)]
-
-        # Joueur courant
         self.current_player = "X"
-
         self.winning_cells = []
         
         # STORY-04 - Tâche 1 : Système de score
@@ -80,6 +76,15 @@ class Connect4:
     def clear_screen(self):
         """Nettoie l'écran du terminal."""
         os.system('cls' if os.name == 'nt' else 'clear')
+
+    def reinitialiser_manche(self):
+        """
+        Tâche 2 : Réinitialise uniquement la grille et les cellules gagnantes
+        pour une nouvelle manche, tout en préservant les scores de session.
+        """
+        self.grid = [[0 for _ in range(7)] for _ in range(6)]
+        self.winning_cells = []
+        self.current_player = "X" # Le joueur X recommence la nouvelle manche
 
     def afficher_grille(self, col_curseur=-1):
         """
@@ -205,70 +210,78 @@ class Connect4:
 
     def jouer(self):
         """
-        Boucle de jeu principale modifiée.
-        Remplacement de input() par un déplacement de curseur en temps réel.
+        Boucle globale mise à jour.
+        Gère les manches successives et l'invite de redémarrage (Tâche 2).
         """
-        colonne_actuelle = 3 # On commence au milieu de la grille (colonne 3)
-        msg_status = ""
+        while True:  # <-- BOUCLE GLOBALE (Sessions / Manches)
+            colonne_actuelle = 3 
+            msg_status = ""
+            manche_terminee = False
 
-        while True:
-            self.clear_screen()
-            print("=== PUISSANCE 4 — MODE ARCADE ===")
-            # Affichage des scores persistants
-            print(f"SCORES | Joueur X (Rouge) : {self.score_j1} - Joueur O (Jaune) : {self.score_j2}")
-            print("-" * 33)
-            print(f"Joueur actuel : {self.current_player}")
-            print("Utilisez ◄ et ► pour vous déplacer, ENTRÉE pour jouer, 'q' pour quitter.")
-            
-            if msg_status:
-                print(msg_status)
-                msg_status = "" # Réinitialisation après affichage
-            else:
-                print()
-
-            # On affiche la grille en lui passant la colonne sur laquelle se trouve le joueur
-            self.afficher_grille(colonne_actuelle)
-
-            # Attente de la saisie d'une touche (bloquant mais instantané, pas besoin d'Entrée)
-            touche = get_key()
-
-            if touche == 'left':
-                colonne_actuelle = max(0, colonne_actuelle - 1)
-            elif touche == 'right':
-                colonne_actuelle = min(6, colonne_actuelle + 1)
-            elif touche == 'q':
-                print("\nPartie interrompue.")
-                break
-            elif touche == 'enter':
-                # Tentative de validation du coup sur la colonne sélectionnée
-                if self.placer_jeton(colonne_actuelle):
-                    # On vérifie les conditions de fin tout de suite
-                    if self.verifier_victoire():
-                        # Incrémentation du score du joueur gagnant
-                        if self.current_player == "X":
-                            self.score_j1 += 1
-                        else:
-                            self.score_j2 += 1
-                            
-                        self.clear_screen()
-                        print("=== FIN DE LA PARTIE ===")
-                        print(f"SCORES | Joueur X : {self.score_j1} - Joueur O : {self.score_j2}")
-                        self.afficher_grille()
-                        print(f"🏆 Félicitations ! Le joueur {self.current_player} a gagné !")
-                        break
-                    
-                    if self.verifier_match_nul():
-                        self.clear_screen()
-                        print("=== FIN DE LA PARTIE ===")
-                        print(f"SCORES | Joueur X : {self.score_j1} - Joueur O : {self.score_j2}")
-                        self.afficher_grille()
-                        print("🤝 Match nul ! La grille est pleine.")
-                        break
-                    
-                    # Si la partie continue, on passe au joueur suivant
-                    self.switch_player()
+            while True:  # <-- BOUCLE DE LA MANCHE EN COURS (Tours)
+                self.clear_screen()
+                print("=== PUISSANCE 4 — MODE ARCADE ===")
+                print(f"SCORES | Joueur X (Rouge) : {self.score_j1} - Joueur O (Jaune) : {self.score_j2}")
+                print("-" * 33)
+                print(f"Joueur actuel : {self.current_player}")
+                print("Utilisez ◄ et ► pour vous déplacer, ENTRÉE pour jouer, 'q' pour quitter.")
+                
+                if msg_status:
+                    print(msg_status)
+                    msg_status = "" 
                 else:
-                    msg_status = "⚠️ Erreur : La colonne est pleine ! Choisissez un autre endroit."
+                    print()
+
+                self.afficher_grille(colonne_actuelle)
+                touche = get_key()
+
+                if touche == 'left':
+                    colonne_actuelle = max(0, colonne_actuelle - 1)
+                elif touche == 'right':
+                    colonne_actuelle = min(6, colonne_actuelle + 1)
+                elif touche == 'q':
+                    print("\nPartie interrompue. Merci d'avoir joué !")
+                    return # Quitte définitivement le programme
+                elif touche == 'enter':
+                    if self.placer_jeton(colonne_actuelle):
+                        if self.verifier_victoire():
+                            if self.current_player == "X":
+                                self.score_j1 += 1
+                            else:
+                                self.score_j2 += 1
+                                
+                            self.clear_screen()
+                            print("=== FIN DE LA MANCHE ===")
+                            print(f"SCORES | Joueur X : {self.score_j1} - Joueur O : {self.score_j2}")
+                            self.afficher_grille()
+                            print(f"🏆 Félicitations ! Le joueur {self.current_player} a gagné la manche !")
+                            manche_terminee = True
+                            break # Casse la boucle des tours
+                        
+                        if self.verifier_match_nul():
+                            self.clear_screen()
+                            print("=== FIN DE LA MANCHE ===")
+                            print(f"SCORES | Joueur X : {self.score_j1} - Joueur O : {self.score_j2}")
+                            self.afficher_grille()
+                            print("🤝 Match nul ! La grille est pleine.")
+                            manche_terminee = True
+                            break # Casse la boucle des tours
+                        
+                        self.switch_player()
+                    else:
+                        msg_status = "⚠️ Erreur : La colonne est pleine ! Choisissez un autre endroit."
+
+            # Écran de choix de fin de manche
+            if manche_terminee:
+                print("\n👉 Pressez 'r' pour relancer une manche ou 'q' pour quitter définitivement.")
+                while True:
+                    choix = get_key()
+                    if choix == 'r':
+                        self.reinitialiser_manche()
+                        break  # Casse la boucle d'attente et remonte au début de la boucle globale
+                    elif choix == 'q':
+                        print("Merci d'avoir joué !")
+                        return  # Ferme définitivement l'application
 
 
 # --- LANCEMENT ---
