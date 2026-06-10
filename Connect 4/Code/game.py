@@ -63,6 +63,47 @@ class Connect4:
 
         # 3. Si la boucle s'est terminée sans trouver de 0, la colonne est pleine
         return False
+    
+    def verifier_victoire(self):
+        joueur = self.current_player
+
+        # Vérification horizontale
+        for ligne in range(6):
+            for col in range(4):
+                if (self.grid[ligne][col] == joueur and
+                    self.grid[ligne][col + 1] == joueur and
+                    self.grid[ligne][col + 2] == joueur and
+                    self.grid[ligne][col + 3] == joueur):
+                    return True
+
+        # Vérification verticale
+        for ligne in range(3):
+            for col in range(7):
+                if (self.grid[ligne][col] == joueur and
+                    self.grid[ligne + 1][col] == joueur and
+                    self.grid[ligne + 2][col] == joueur and
+                    self.grid[ligne + 3][col] == joueur):
+                    return True
+
+        # Vérification diagonale descendante (\)
+        for ligne in range(3):
+            for col in range(4):
+                if (self.grid[ligne][col] == joueur and
+                    self.grid[ligne + 1][col + 1] == joueur and
+                    self.grid[ligne + 2][col + 2] == joueur and
+                    self.grid[ligne + 3][col + 3] == joueur):
+                    return True
+
+        # Vérification diagonale montante (/)
+        for ligne in range(3, 6):
+            for col in range(4):
+                if (self.grid[ligne][col] == joueur and
+                    self.grid[ligne - 1][col + 1] == joueur and
+                    self.grid[ligne - 2][col + 2] == joueur and
+                    self.grid[ligne - 3][col + 3] == joueur):
+                    return True
+
+        return False
 
 
 # --- ZONE DE TEST ---
@@ -84,3 +125,4 @@ if __name__ == "__main__":
     print("\n--- Joueur O joue dans la colonne 0 ---")
     jeu.placer_jeton(0)
     jeu.afficher_grille()
+
