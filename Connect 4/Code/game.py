@@ -56,6 +56,8 @@ class Connect4:
         # Joueur courant
         self.current_player = "X"
 
+        self.winning_cells = []
+
     def get_grid(self):
         """Retourne la grille."""
         return self.grid
@@ -76,37 +78,43 @@ class Connect4:
         os.system('cls' if os.name == 'nt' else 'clear')
 
     def afficher_grille(self, col_curseur=-1):
-        """
-        Affiche la grille avec couleurs ANSI et caractères Unicode.
-        """
+       """
+          Affiche la grille avec couleurs ANSI et caractères Unicode.
+         """
 
-        if col_curseur != -1:
-            print("  " + "  " * col_curseur + "▼")
-        else:
-            print()
+       if col_curseur != -1:
+         print("  " + "  " * col_curseur + "▼")
+       else:
+          print()
 
-        print("┌─┬─┬─┬─┬─┬─┬─┐")
+       print("┌─┬─┬─┬─┬─┬─┬─┐")
 
-        for i, row in enumerate(self.grid):
+       for i, row in enumerate(self.grid):
 
-            ligne = []
+         ligne = []
 
-            for cell in row:
-                if cell == "X":
-                    ligne.append(f"{RED}●{RESET}")
-                elif cell == "O":
-                    ligne.append(f"{YELLOW}●{RESET}")
-                else:
-                    ligne.append(" ")
+         for j, cell in enumerate(row):
 
-            print("│" + "│".join(ligne) + "│")
+            if (i, j) in self.winning_cells:
+                ligne.append(f"\033[92m●{RESET}")  # Vert pour l'alignement gagnant
 
-            if i < 5:
-                print("├─┼─┼─┼─┼─┼─┼─┤")
+            elif cell == "X":
+                ligne.append(f"{RED}●{RESET}")
 
-        print("└─┴─┴─┴─┴─┴─┴─┘")
-        print(" 0 1 2 3 4 5 6")
+            elif cell == "O":
+                ligne.append(f"{YELLOW}●{RESET}")
 
+            else:
+                ligne.append(" ")
+
+         print("│" + "│".join(ligne) + "│")
+
+         if i < 5:
+            print("├─┼─┼─┼─┼─┼─┼─┤")
+
+       print("└─┴─┴─┴─┴─┴─┴─┘")
+       print(" 0 1 2 3 4 5 6")
+  
     def placer_jeton(self, colonne):
         """
         Place le jeton du joueur actuel dans la colonne choisie.
@@ -123,41 +131,73 @@ class Connect4:
     def verifier_victoire(self):
         joueur = self.current_player
 
-        # Vérification horizontale
+         # Vérification horizontale
         for ligne in range(6):
-            for col in range(4):
-                if (self.grid[ligne][col] == joueur and
-                    self.grid[ligne][col + 1] == joueur and
-                    self.grid[ligne][col + 2] == joueur and
-                    self.grid[ligne][col + 3] == joueur):
-                    return True
+          for col in range(4):
+            if (
+                self.grid[ligne][col] == joueur and
+                self.grid[ligne][col + 1] == joueur and
+                self.grid[ligne][col + 2] == joueur and
+                self.grid[ligne][col + 3] == joueur
+            ):
+                self.winning_cells = [
+                    (ligne, col),
+                    (ligne, col + 1),
+                    (ligne, col + 2),
+                    (ligne, col + 3)
+                ]
+                return True
 
-        # Vérification verticale
+         # Vérification verticale
         for ligne in range(3):
-            for col in range(7):
-                if (self.grid[ligne][col] == joueur and
-                    self.grid[ligne + 1][col] == joueur and
-                    self.grid[ligne + 2][col] == joueur and
-                    self.grid[ligne + 3][col] == joueur):
-                    return True
+         for col in range(7):
+            if (
+                self.grid[ligne][col] == joueur and
+                self.grid[ligne + 1][col] == joueur and
+                self.grid[ligne + 2][col] == joueur and
+                self.grid[ligne + 3][col] == joueur
+            ):
+                self.winning_cells = [
+                    (ligne, col),
+                    (ligne + 1, col),
+                    (ligne + 2, col),
+                    (ligne + 3, col)
+                ]
+                return True
 
-        # Vérification diagonale descendante (\)
+         # Vérification diagonale descendante (\)
         for ligne in range(3):
-            for col in range(4):
-                if (self.grid[ligne][col] == joueur and
-                    self.grid[ligne + 1][col + 1] == joueur and
-                    self.grid[ligne + 2][col + 2] == joueur and
-                    self.grid[ligne + 3][col + 3] == joueur):
-                    return True
+         for col in range(4):
+            if (
+                self.grid[ligne][col] == joueur and
+                self.grid[ligne + 1][col + 1] == joueur and
+                self.grid[ligne + 2][col + 2] == joueur and
+                self.grid[ligne + 3][col + 3] == joueur
+            ):
+                self.winning_cells = [
+                    (ligne, col),
+                    (ligne + 1, col + 1),
+                    (ligne + 2, col + 2),
+                    (ligne + 3, col + 3)
+                ]
+                return True
 
-        # Vérification diagonale montante (/)
+         # Vérification diagonale montante (/)
         for ligne in range(3, 6):
-            for col in range(4):
-                if (self.grid[ligne][col] == joueur and
-                    self.grid[ligne - 1][col + 1] == joueur and
-                    self.grid[ligne - 2][col + 2] == joueur and
-                    self.grid[ligne - 3][col + 3] == joueur):
-                    return True
+         for col in range(4):
+            if (
+                self.grid[ligne][col] == joueur and
+                self.grid[ligne - 1][col + 1] == joueur and
+                self.grid[ligne - 2][col + 2] == joueur and
+                self.grid[ligne - 3][col + 3] == joueur
+            ):
+                self.winning_cells = [
+                    (ligne, col),
+                    (ligne - 1, col + 1),
+                    (ligne - 2, col + 2),
+                    (ligne - 3, col + 3)
+                ]
+                return True
 
         return False
 
