@@ -1,3 +1,5 @@
+import random
+
 class Connect4:
     def __init__(self):
         """
@@ -37,3 +39,48 @@ class Connect4:
         """
         for row in self.grid:
             print(" ".join(str(cell) if cell != 0 else "." for cell in row))
+        # Affichage des numéros de colonnes sous la grille pour aider le joueur
+        print("0 1 2 3 4 5 6")
+
+    def placer_jeton(self, colonne):
+        """
+        Tâche 3 : Logique de "gravité"
+        Place le jeton du joueur actuel dans la colonne choisie en le faisant
+        tomber sur la ligne vide la plus basse.
+        Retourne True si le placement est réussi, False si la colonne est pleine ou invalide.
+        """
+        # 1. Vérification si l'index de la colonne est correct
+        if colonne < 0 or colonne >= 7:
+            return False
+
+        # 2. On parcourt de la ligne du bas (5) jusqu'à la ligne du haut (0)
+        # range(5, -1, -1) signifie : commence à 5, va jusqu'à 0 inclus, à reculons (-1)
+        for ligne in range(5, -1, -1):
+            if self.grid[ligne][colonne] == 0:
+                # On trouve une case vide, on y dépose le jeton
+                self.grid[ligne][colonne] = self.current_player
+                return True # Placement réussi !
+
+        # 3. Si la boucle s'est terminée sans trouver de 0, la colonne est pleine
+        return False
+
+
+# --- ZONE DE TEST ---
+if __name__ == "__main__":
+    jeu = Connect4()
+
+    print("--- Grille initiale vide ---")
+    jeu.afficher_grille()
+
+    print("\n--- Joueur X joue dans la colonne 3 ---")
+    jeu.placer_jeton(3)
+    jeu.afficher_grille()
+
+    print("\n--- Changement de joueur et Joueur O joue AUSSI dans la colonne 3 ---")
+    jeu.switch_player()
+    jeu.placer_jeton(3) # Devrait s'empiler au-dessus du X
+    jeu.afficher_grille()
+
+    print("\n--- Joueur O joue dans la colonne 0 ---")
+    jeu.placer_jeton(0)
+    jeu.afficher_grille()
