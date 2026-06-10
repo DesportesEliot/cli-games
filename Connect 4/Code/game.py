@@ -2,6 +2,10 @@ import random
 import os
 import sys
 
+RED = "\033[91m"
+YELLOW = "\033[93m"
+RESET = "\033[0m"
+
 # Gestion de la capture instantanée du clavier (Cross-platform)
 try:
     import msvcrt
@@ -73,19 +77,35 @@ class Connect4:
 
     def afficher_grille(self, col_curseur=-1):
         """
-        Affiche la grille dans le terminal avec un curseur visuel optionnel.
-        Modifié pour la Tâche 1 de la Story 3.
+        Affiche la grille avec couleurs ANSI et caractères Unicode.
         """
-        # Si un curseur est actif, on l'affiche au-dessus de la bonne colonne
-        # Chaque colonne prenant 2 caractères de large ("X "), l'index est multiplié par 2
-        if col_curseur != -1:
-            print(" " * (col_curseur * 2) + "V")
-        else:
-            print() # Ligne vide pour garder le même espacement
 
-        for row in self.grid:
-            print(" ".join(str(cell) if cell != 0 else "." for cell in row))
-        print("0 1 2 3 4 5 6")
+        if col_curseur != -1:
+            print("  " + "  " * col_curseur + "▼")
+        else:
+            print()
+
+        print("┌─┬─┬─┬─┬─┬─┬─┐")
+
+        for i, row in enumerate(self.grid):
+
+            ligne = []
+
+            for cell in row:
+                if cell == "X":
+                    ligne.append(f"{RED}●{RESET}")
+                elif cell == "O":
+                    ligne.append(f"{YELLOW}●{RESET}")
+                else:
+                    ligne.append(" ")
+
+            print("│" + "│".join(ligne) + "│")
+
+            if i < 5:
+                print("├─┼─┼─┼─┼─┼─┼─┤")
+
+        print("└─┴─┴─┴─┴─┴─┴─┘")
+        print(" 0 1 2 3 4 5 6")
 
     def placer_jeton(self, colonne):
         """
