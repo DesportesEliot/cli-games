@@ -29,3 +29,11 @@ class Connect4:
             self.current_player = "O"
         else:
             self.current_player = "X"
+
+    def afficher_grille(self):
+        """
+        Affiche la grille dans le terminal (rendu texte basique).
+        Les zéros sont remplacés par des '.' pour une meilleure lisibilité.
+        """
+        for row in self.grid:
+            print(" ".join(str(cell) if cell != 0 else "." for cell in row))
