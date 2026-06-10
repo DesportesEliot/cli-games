@@ -1,4 +1,45 @@
 import random
+import os
+import sys
+
+# Gestion de la capture instantanée du clavier (Cross-platform)
+try:
+    import msvcrt
+    def get_key():
+        """Capture une touche sous Windows (les flèches renvoient deux octets)."""
+        ch = msvcrt.getch()
+        if ch in (b'\x00', b'\xe0'):  # Touche spéciale (ex: flèches)
+            ch2 = msvcrt.getch()
+            if ch2 == b'K': return 'left'
+            if ch2 == b'M': return 'right'
+        if ch in (b'\r', b'\n'):
+            return 'enter'
+        try:
+            return ch.decode('utf-8').lower()
+        except UnicodeDecodeError:
+            return None
+except ImportError:
+    import tty
+    import termios
+    def get_key():
+        """Capture une touche sous Linux / macOS."""
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+            if ch == '\x1b':  # Séquence d'échappement (ex: flèches)
+                ch2 = sys.stdin.read(1)
+                if ch2 == '[':
+                    ch3 = sys.stdin.read(1)
+                    if ch3 == 'D': return 'left'
+                    if ch3 == 'C': return 'right'
+            if ch in ('\r', '\n'):
+                return 'enter'
+            return ch.lower()
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
 
 class Connect4:
     def __init__(self):
@@ -12,56 +53,51 @@ class Connect4:
         self.current_player = "X"
 
     def get_grid(self):
-        """
-        Retourne la grille.
-        """
+        """Retourne la grille."""
         return self.grid
 
     def get_current_player(self):
-        """
-        Retourne le joueur actuel.
-        """
+        """Retourne le joueur actuel."""
         return self.current_player
 
     def switch_player(self):
-        """
-        Change de joueur : X <-> O
-        """
+        """Change de joueur : X <-> O"""
         if self.current_player == "X":
             self.current_player = "O"
         else:
             self.current_player = "X"
 
-    def afficher_grille(self):
+    def clear_screen(self):
+        """Nettoie l'écran du terminal."""
+        os.system('cls' if os.name == 'nt' else 'clear')
+
+    def afficher_grille(self, col_curseur=-1):
         """
-        Affiche la grille dans le terminal (rendu texte basique).
-        Les zéros sont remplacés par des '.' pour une meilleure lisibilité.
+        Affiche la grille dans le terminal avec un curseur visuel optionnel.
+        Modifié pour la Tâche 1 de la Story 3.
         """
+        # Si un curseur est actif, on l'affiche au-dessus de la bonne colonne
+        # Chaque colonne prenant 2 caractères de large ("X "), l'index est multiplié par 2
+        if col_curseur != -1:
+            print(" " * (col_curseur * 2) + "V")
+        else:
+            print() # Ligne vide pour garder le même espacement
+
         for row in self.grid:
             print(" ".join(str(cell) if cell != 0 else "." for cell in row))
-        # Affichage des numéros de colonnes sous la grille pour aider le joueur
         print("0 1 2 3 4 5 6")
 
     def placer_jeton(self, colonne):
         """
-        Tâche 3 : Logique de "gravité"
-        Place le jeton du joueur actuel dans la colonne choisie en le faisant
-        tomber sur la ligne vide la plus basse.
-        Retourne True si le placement est réussi, False si la colonne est pleine ou invalide.
+        Place le jeton du joueur actuel dans la colonne choisie.
         """
-        # 1. Vérification si l'index de la colonne est correct
         if colonne < 0 or colonne >= 7:
             return False
 
-        # 2. On parcourt de la ligne du bas (5) jusqu'à la ligne du haut (0)
-        # range(5, -1, -1) signifie : commence à 5, va jusqu'à 0 inclus, à reculons (-1)
         for ligne in range(5, -1, -1):
             if self.grid[ligne][colonne] == 0:
-                # On trouve une case vide, on y dépose le jeton
                 self.grid[ligne][colonne] = self.current_player
-                return True # Placement réussi !
-
-        # 3. Si la boucle s'est terminée sans trouver de 0, la colonne est pleine
+                return True
         return False
     
     def verifier_victoire(self):
@@ -106,67 +142,70 @@ class Connect4:
         return False
 
     def verifier_match_nul(self):
-        """
-        Vérifie si la grille est pleine.
-        Retourne True si aucune case vide n'est présente.
-        """
+        """Vérifie si la grille est pleine."""
         for ligne in self.grid:
             if 0 in ligne:
                 return False
-
         return True
 
     def jouer(self):
         """
-        STORY-02 - Tâche 3 : Boucle de jeu principale.
-        Gère les tours des joueurs, les saisies de colonne et la fin de la partie.
+        Boucle de jeu principale modifiée.
+        Remplacement de input() par un déplacement de curseur en temps réel.
         """
-        print("--- Début de la partie de Puissance 4 ! ---")
-        
+        colonne_actuelle = 3 # On commence au milieu de la grille (colonne 3)
+        msg_status = ""
+
         while True:
-            # 1. On affiche l'état actuel de la grille
-            print("\n")
-            self.afficher_grille()
-            print(f"C'est au tour du joueur {self.current_player}.")
+            self.clear_screen()
+            print("=== PUISSANCE 4 — MODE ARCADE ===")
+            print(f"Joueur actuel : {self.current_player}")
+            print("Utilisez ◄ et ► pour vous déplacer, ENTRÉE pour jouer, 'q' pour quitter.")
+            
+            if msg_status:
+                print(msg_status)
+                msg_status = "" # Réinitialisation après affichage
+            else:
+                print()
 
-            # 2. Boucle de saisie avec gestion des erreurs
-            colonne_choisie = -1
-            while True:
-                saisie = input("Choisissez une colonne (0-6) : ").strip()
-                
-                # Vérification si la saisie est bien un nombre entier
-                if not saisie.isdigit():
-                    print("Erreur : Veuillez entrer un nombre valide entre 0 et 6.")
-                    continue
-                
-                colonne_choisie = int(saisie)
-                
-                # Tentative de placement du jeton (vérifie en même temps si l'index est valide et la colonne non pleine)
-                if self.placer_jeton(colonne_choisie):
-                    break # Placement réussi, on quitte la boucle de saisie
+            # On affiche la grille en lui passant la colonne sur laquelle se trouve le joueur
+            self.afficher_grille(colonne_actuelle)
+
+            # Attente de la saisie d'une touche (bloquant mais instantané, pas besoin d'Entrée)
+            touche = get_key()
+
+            if touche == 'left':
+                colonne_actuelle = max(0, colonne_actuelle - 1)
+            elif touche == 'right':
+                colonne_actuelle = min(6, colonne_actuelle + 1)
+            elif touche == 'q':
+                print("\nPartie interrompue.")
+                break
+            elif touche == 'enter':
+                # Tentative de validation du coup sur la colonne sélectionnée
+                if self.placer_jeton(colonne_actuelle):
+                    # On vérifie les conditions de fin tout de suite
+                    if self.verifier_victoire():
+                        self.clear_screen()
+                        print("=== FIN DE LA PARTIE ===")
+                        self.afficher_grille()
+                        print(f"🏆 Félicitations ! Le joueur {self.current_player} a gagné !")
+                        break
+                    
+                    if self.verifier_match_nul():
+                        self.clear_screen()
+                        print("=== FIN DE LA PARTIE ===")
+                        self.afficher_grille()
+                        print("🤝 Match nul ! La grille est pleine.")
+                        break
+                    
+                    # Si la partie continue, on passe au joueur suivant
+                    self.switch_player()
                 else:
-                    print("Erreur : Colonne pleine ou invalide (hors limites). Réessayez.")
-
-            # 3. Vérification si le coup actuel entraîne une victoire
-            if self.verifier_victoire():
-                print("\n")
-                self.afficher_grille()
-                print(f"Félicitations ! Le joueur {self.current_player} a gagné la partie !")
-                break
-
-            # 4. Vérification si le coup actuel entraîne un match nul
-            if self.verifier_match_nul():
-                print("\n")
-                self.afficher_grille()
-                print("Match nul ! La grille est pleine.")
-                break
-
-            # 5. Changement de joueur pour le tour suivant
-            self.switch_player()
+                    msg_status = "⚠️ Erreur : La colonne est pleine ! Choisissez un autre endroit."
 
 
-# --- ZONE DE TEST ---
+# --- LANCEMENT ---
 if __name__ == "__main__":
     jeu = Connect4()
-    # Lancement de la boucle principale du jeu
     jeu.jouer()
