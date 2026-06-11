@@ -232,11 +232,11 @@ class Connect4:
 
             while True:  # <-- INNER LOOP (Turns within a round)
                 self.clear_screen()
-                print("=== PUISSANCE 4 — MODE ARCADE ===")
-                print(f"SCORES | Joueur X (Rouge) : {self.score_j1} - Joueur O (Jaune) : {self.score_j2}")
+                print("=== CONNECT 4 — ARCADE MODE ===")
+                print(f"SCORES | Player X (Red): {self.score_j1} - Player O (Yellow): {self.score_j2}")
                 print("-" * 33)
-                print(f"Joueur actuel : {self.current_player}")
-                print("Utilisez ◄ et ► pour vous déplacer, ENTRÉE pour jouer, 'q' pour quitter.")
+                print(f"Current player: {self.current_player}")
+                print("Use ◄ and ► to move, ENTER to drop, 'q' to quit.")
 
                 if msg_status:
                     print(msg_status)
@@ -252,7 +252,7 @@ class Connect4:
                 elif touche == 'right':
                     colonne_actuelle = min(6, colonne_actuelle + 1)
                 elif touche == 'q':
-                    print("\nPartie interrompue. Merci d'avoir joué !")
+                    print("\nGame aborted. Thanks for playing!")
                     return  # Exits the program entirely
                 elif touche == 'enter':
                     if self.placer_jeton(colonne_actuelle):
@@ -263,36 +263,36 @@ class Connect4:
                                 self.score_j2 += 1
 
                             self.clear_screen()
-                            print("=== FIN DE LA MANCHE ===")
-                            print(f"SCORES | Joueur X : {self.score_j1} - Joueur O : {self.score_j2}")
+                            print("=== END OF ROUND ===")
+                            print(f"SCORES | Player X: {self.score_j1} - Player O: {self.score_j2}")
                             self.afficher_grille()
-                            print(f"🏆 Félicitations ! Le joueur {self.current_player} a gagné la manche !")
+                            print(f"🏆 Congratulations! Player {self.current_player} wins the round!")
                             manche_terminee = True
                             break  # Exits the turn loop
 
                         if self.verifier_match_nul():
                             self.clear_screen()
-                            print("=== FIN DE LA MANCHE ===")
-                            print(f"SCORES | Joueur X : {self.score_j1} - Joueur O : {self.score_j2}")
+                            print("=== END OF ROUND ===")
+                            print(f"SCORES | Player X: {self.score_j1} - Player O: {self.score_j2}")
                             self.afficher_grille()
-                            print("🤝 Match nul ! La grille est pleine.")
+                            print("🤝 Draw! The grid is full.")
                             manche_terminee = True
                             break  # Exits the turn loop
 
                         self.switch_player()
                     else:
-                        msg_status = "⚠️ Erreur : La colonne est pleine ! Choisissez un autre endroit."
+                        msg_status = "⚠️ Error: Column is full! Please choose another one."
 
             # End-of-round choice screen
             if manche_terminee:
-                print("\n👉 Pressez 'r' pour relancer une manche ou 'q' pour quitter définitivement.")
+                print("\n👉 Press 'r' to play another round or 'q' to quit.")
                 while True:
                     choix = get_key()
                     if choix == 'r':
                         self.reinitialiser_manche()
                         break  # Exits the wait loop and loops back to the outer loop
                     elif choix == 'q':
-                        print("Merci d'avoir joué !")
+                        print("Thanks for playing!")
                         return  # Closes the application entirely
 
 
