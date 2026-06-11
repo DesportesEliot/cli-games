@@ -4,7 +4,7 @@ import os
 class Game2048:
     def __init__(self):
         """
-        Initialise une nouvelle partie de 2048.
+        Initialises a new 2048 game.
         """
         self.grid = [[0 for _ in range(4)] for _ in range(4)]
         self.score = 0
@@ -16,26 +16,26 @@ class Game2048:
             if contenu.isdigit():
                 self.highscore = int(contenu)
         self.colors = {
-    2: "\033[97m",      # Blanc
-    4: "\033[93m",      # Jaune
-    8: "\033[91m",      # Rouge clair
-    16: "\033[31m",     # Rouge
-    32: "\033[35m",     # Magenta
-    64: "\033[95m",     # Rose
-    128: "\033[92m",    # Vert
-    256: "\033[96m",    # Cyan
-    512: "\033[94m",    # Bleu
-    1024: "\033[34m",   # Bleu foncé
-    2048: "\033[33m"    # Or/Jaune foncé
-}
+            2: "\033[97m",      # White
+            4: "\033[93m",      # Yellow
+            8: "\033[91m",      # Light red
+            16: "\033[31m",     # Red
+            32: "\033[35m",     # Magenta
+            64: "\033[95m",     # Pink
+            128: "\033[92m",    # Green
+            256: "\033[96m",    # Cyan
+            512: "\033[94m",    # Blue
+            1024: "\033[34m",   # Dark blue
+            2048: "\033[33m"    # Gold / dark yellow
+        }
 
     def get_grid(self):
-        """Retourne la grille actuelle."""
+        """Returns the current grid."""
         return self.grid
 
     def add_random_tile(self):
         """
-        Ajoute un 2 ou un 4 dans une case vide aléatoire.
+        Adds a 2 or a 4 in a random empty cell.
         """
         empty_cells = []
         for row in range(4):
@@ -52,13 +52,13 @@ class Game2048:
 
     def print_board(self):
         """
-        Affiche la grille de jeu avec des bordures Unicode et le score actuel.
+        Displays the game grid with Unicode borders and the current score.
         """
-        print(f"Score : {self.score}   │   Meilleur Score : {self.highscore}\n")
-        
-        # Ligne du haut : ╔══════╦══════╦══════╦══════╗
+        print(f"Score: {self.score}   │   Best Score: {self.highscore}\n")
+
+        # Top border: ╔══════╦══════╦══════╦══════╗
         print("╔" + "══════╦" * 3 + "══════╗")
-        
+
         for i, row in enumerate(self.grid):
             for cell in row:
                 if cell == 0:
@@ -67,19 +67,19 @@ class Game2048:
                     color = self.colors.get(cell, "\033[0m")
                     reset = "\033[0m"
                     print(f"║ {color}{cell:4d}{reset} ", end="")
-            print("║") # Ferme la ligne à droite
-            
-            # Ligne de séparation (sauf pour la toute dernière ligne)
+            print("║")  # Close the row on the right
+
+            # Separator line (except after the last row)
             if i < 3:
-                # Séparation du milieu : ╠══════╬══════╬══════╬══════╣
+                # Middle separator: ╠══════╬══════╬══════╬══════╣
                 print("╠" + "══════╬" * 3 + "══════╣")
             else:
-                # Ligne du bas : ╚══════╩══════╩══════╩══════╝
+                # Bottom border: ╚══════╩══════╩══════╩══════╝
                 print("╚" + "══════╩" * 3 + "══════╝")
 
     def slide_ligne(self, ligne):
         """
-        Déplace toutes les valeurs non nulles vers la gauche.
+        Slides all non-zero values to the left.
         """
         resultat = [x for x in ligne if x != 0]
         while len(resultat) < 4:
@@ -88,20 +88,20 @@ class Game2048:
 
     def fusionne_ligne(self, ligne):
         """
-        Fusionne les cases identiques adjacentes et met à jour le score.
+        Merges identical adjacent cells and updates the score.
         """
         resultat = ligne.copy()
         for i in range(len(resultat) - 1):
             if resultat[i] != 0 and resultat[i] == resultat[i + 1]:
                 resultat[i] *= 2
-                self.score += resultat[i]  # <-- AJOUT : On ajoute les points au score !
+                self.score += resultat[i]  # Add the merged value to the score
                 self.save_highscore()
                 resultat[i + 1] = 0
         return resultat
-    
+
     def move_left(self):
         """
-        Applique le glissement et la fusion vers la GAUCHE sur toute la grille.
+        Applies the slide and merge to the LEFT across the whole grid.
         """
         moved = False
         for i in range(4):
@@ -116,7 +116,7 @@ class Game2048:
 
     def move_right(self):
         """
-        Applique le mouvement vers la DROITE en inversant les lignes.
+        Applies the movement to the RIGHT by reversing the rows.
         """
         moved = False
         for i in range(4):
@@ -133,13 +133,13 @@ class Game2048:
 
     def transpose_matrix(self):
         """
-        Transpose la grille. Les lignes deviennent des colonnes.
+        Transposes the grid. Rows become columns.
         """
         self.grid = [list(row) for row in zip(*self.grid)]
 
     def move_up(self):
         """
-        Applique le mouvement vers le HAUT.
+        Applies the movement UP.
         """
         self.transpose_matrix()
         moved = self.move_left()
@@ -148,16 +148,16 @@ class Game2048:
 
     def move_down(self):
         """
-        Applique le mouvement vers le BAS.
+        Applies the movement DOWN.
         """
         self.transpose_matrix()
         moved = self.move_right()
         self.transpose_matrix()
         return moved
-    
+
     def est_victoire(self):
         """
-        Vérifie si le joueur a atteint la tuile 2048.
+        Checks whether the player has reached the 2048 tile.
         """
         for ligne in self.grid:
             if 2048 in ligne:
@@ -166,8 +166,8 @@ class Game2048:
 
     def est_bloque(self):
         """
-        Vérifie si la grille est pleine ET qu'aucune fusion n'est possible.
-        Retourne True si le joueur a perdu (Game Over), False sinon.
+        Checks whether the grid is full and no merge is possible.
+        Returns True if the player has lost (Game Over), False otherwise.
         """
         for row in range(4):
             for col in range(4):
@@ -188,84 +188,81 @@ class Game2048:
 
     def est_game_over(self):
         """
-        Vérifie si la partie est terminée par défaite.
+        Checks whether the game has ended in a loss.
         """
         return self.est_bloque()
-    
+
     def clear_screen(self):
-         """
-         Nettoie le terminal.
-          """
-         os.system('cls' if os.name == 'nt' else 'clear')
-    
+        """
+        Clears the terminal.
+        """
+        os.system('cls' if os.name == 'nt' else 'clear')
+
     def save_highscore(self):
         """
-          Sauvegarde le nouveau record si le score actuel est supérieur.
+        Saves the new high score if the current score is higher.
         """
         if self.score > self.highscore:
-         self.highscore = self.score
+            self.highscore = self.score
 
-    
-         with open(".2048_highscore", "w") as f:
-               f.write(str(self.highscore))
-
-
+            with open(".2048_highscore", "w") as f:
+                f.write(str(self.highscore))
 
 
 if __name__ == "__main__":
     jeu = Game2048()
 
-    # Initialisation classique : 2 tuiles de départ
+    # Classic initialisation: 2 starting tiles
     jeu.add_random_tile()
     jeu.add_random_tile()
 
-    print("=== BIENVENUE DANS 2048 ===")
+    print("=== WELCOME TO 2048 ===")
 
-    # Tâche 2 : Boucle de jeu utilisant input()
+    # Task 2: Game loop using input()
     while True:
         jeu.print_board()
 
-        # Vérification des conditions de fin de jeu 
+        # Check end-of-game conditions
         if jeu.est_victoire():
-            print("🏆 Victoire ! Vous avez atteint 2048 !")
+            print("🏆 You win! You reached 2048!")
             break
 
         if jeu.est_game_over():
-            print("❌ Game Over ! La grille est pleine et bloquée.")
+            print("❌ Game Over! The grid is full and no moves are left.")
             break
 
-        # Saisie utilisateur sécurisée
-        action = input("Jouez (z=haut, s=bas, q=gauche, d=droite) ou 'quit' pour arrêter : ").lower()
+        # Safe user input
+        action = input("Move (w=up, s=down, a=left, d=right) or 'quit' to stop: ").lower()
 
         moved = False
         msg_erreur = ""
 
-        if action == 'z':
+        if action == 'w':
             moved = jeu.move_up()
         elif action == 's':
             moved = jeu.move_down()
-        elif action == 'q':
+        elif action == 'a':
             moved = jeu.move_left()
         elif action == 'd':
             moved = jeu.move_right()
         elif action == 'quit':
-            print("Partie interrompue.")
+            print("Game aborted.")
             break
         else:
-            msg_erreur = "⚠️ Commande non reconnue. Utilisez z, q, s, d."
+            msg_erreur = "⚠️ Unknown command. Use w, a, s, d."
 
-        # On nettoie l'écran ici, juste avant de potentiellement rajouter une tuile et de reboucler   
+        # Clear the screen just before potentially adding a tile and looping back
         jeu.clear_screen()
 
-        # On réaffiche le message de bienvenue en haut pour faire propre
-        print("=== BIENVENUE DANS 2048 ===")
+        # Re-display the welcome banner at the top
+        print("=== WELCOME TO 2048 ===")
 
         if msg_erreur:
             print(msg_erreur)
             continue
 
-        # Si le mouvement est valide, on ajoute une nouvelle tuile
+        # If the move was valid, add a new tile
         if moved:
             jeu.add_random_tile()
-        elif action in ['z', 'q', 's', 'd']: # Si on a tapé une bonne touche mais que ça n'a pas bougé
-            print("👉 Déplacement impossible dans cette direction.\n")
+        elif action in ['w', 'a', 's', 'd']:  # Valid key pressed but nothing moved
+            print("👉 No movement possible in that direction.\n")
