@@ -6,13 +6,13 @@ RED = "\033[91m"
 YELLOW = "\033[93m"
 RESET = "\033[0m"
 
-# Gestion de la capture instantanée du clavier (Cross-platform)
+# Cross-platform instant keyboard capture
 try:
     import msvcrt
     def get_key():
-        """Capture une touche sous Windows (les flèches renvoient deux octets)."""
+        """Captures a keypress on Windows (arrow keys return two bytes)."""
         ch = msvcrt.getch()
-        if ch in (b'\x00', b'\xe0'):  # Touche spéciale (ex: flèches)
+        if ch in (b'\x00', b'\xe0'):  # Special key (e.g. arrows)
             ch2 = msvcrt.getch()
             if ch2 == b'K': return 'left'
             if ch2 == b'M': return 'right'
@@ -26,13 +26,13 @@ except ImportError:
     import tty
     import termios
     def get_key():
-        """Capture une touche sous Linux / macOS."""
+        """Captures a keypress on Linux / macOS."""
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
         try:
             tty.setraw(sys.stdin.fileno())
             ch = sys.stdin.read(1)
-            if ch == '\x1b':  # Séquence d'échappement (ex: flèches)
+            if ch == '\x1b':  # Escape sequence (e.g. arrows)
                 ch2 = sys.stdin.read(1)
                 if ch2 == '[':
                     ch3 = sys.stdin.read(1)
@@ -48,88 +48,88 @@ except ImportError:
 class Connect4:
     def __init__(self):
         """
-        Initialise une partie de Puissance 4.
+        Initialises a Connect 4 game.
         """
         self.grid = [[0 for _ in range(7)] for _ in range(6)]
         self.current_player = "X"
         self.winning_cells = []
-        
-        # STORY-04 - Tâche 1 : Système de score
-        self.score_j1 = 0  # Score du Joueur X
-        self.score_j2 = 0  # Score du Joueur O
+
+        # STORY-04 - Task 1: Score system
+        self.score_j1 = 0  # Player X score
+        self.score_j2 = 0  # Player O score
 
     def get_grid(self):
-        """Retourne la grille."""
+        """Returns the grid."""
         return self.grid
 
     def get_current_player(self):
-        """Retourne le joueur actuel."""
+        """Returns the current player."""
         return self.current_player
 
     def switch_player(self):
-        """Change de joueur : X <-> O"""
+        """Switches the active player: X <-> O"""
         if self.current_player == "X":
             self.current_player = "O"
         else:
             self.current_player = "X"
 
     def clear_screen(self):
-        """Nettoie l'écran du terminal."""
+        """Clears the terminal screen."""
         os.system('cls' if os.name == 'nt' else 'clear')
 
     def reinitialiser_manche(self):
         """
-        Tâche 2 : Réinitialise uniquement la grille et les cellules gagnantes
-        pour une nouvelle manche, tout en préservant les scores de session.
+        Task 2: Resets only the grid and winning cells for a new round,
+        while preserving the session scores.
         """
         self.grid = [[0 for _ in range(7)] for _ in range(6)]
         self.winning_cells = []
-        self.current_player = "X" # Le joueur X recommence la nouvelle manche
+        self.current_player = "X"  # Player X starts the new round
 
     def afficher_grille(self, col_curseur=-1):
         """
-        Affiche la grille élargie (façon carrée) pour corriger le ratio du terminal
-        et aligne parfaitement le curseur ▼ au centre de la colonne.
+        Displays the expanded grid (square-like) to fix the terminal aspect ratio
+        and perfectly aligns the ▼ cursor at the centre of the column.
         """
-        # Formule magique : le centre de la colonne 'c' est exactement à l'index (2 + 4 * c)
+        # Magic formula: the centre of column 'c' is exactly at index (2 + 4 * c)
         if col_curseur != -1:
             print(" " * (2 + 4 * col_curseur) + "▼")
         else:
             print()
 
-        # Bordure supérieure élargie (3 lignes horizontales par case)
+        # Top border (3 horizontal units per cell)
         print("┌───┬───┬───┬───┬───┬───┬───┐")
 
         for i, row in enumerate(self.grid):
             ligne = []
             for j, cell in enumerate(row):
                 if (i, j) in self.winning_cells:
-                    token = f"\033[92m●{RESET}"  # Vert pour la victoire
+                    token = f"\033[92m●{RESET}"  # Green for winning cells
                 elif cell == "X":
                     token = f"{RED}●{RESET}"
                 elif cell == "O":
                     token = f"{YELLOW}●{RESET}"
                 else:
-                    token = " "  # Case vide
-                
-                # On entoure le jeton d'un espace à gauche et à droite pour faire un carré
+                    token = " "  # Empty cell
+
+                # Pad the token with one space on each side to keep a square shape
                 ligne.append(f" {token} ")
-            
-            # On assemble la ligne avec les séparateurs verticaux
+
+            # Assemble the row with vertical separators
             print("│" + "│".join(ligne) + "│")
-            
-            # Lignes de séparation internes
+
+            # Internal separator rows
             if i < 5:
                 print("├───┼───┼───┼───┼───┼───┼───┤")
 
-        # Bordure inférieure
+        # Bottom border
         print("└───┴───┴───┴───┴───┴───┴───┘")
-        # On espace aussi les numéros du bas pour coller au nouveau design
+        # Column numbers spaced to match the new design
         print("  0   1   2   3   4   5   6 ")
-  
+
     def placer_jeton(self, colonne):
         """
-        Place le jeton du joueur actuel dans la colonne choisie.
+        Places the current player's token in the chosen column.
         """
         if colonne < 0 or colonne >= 7:
             return False
@@ -139,11 +139,11 @@ class Connect4:
                 self.grid[ligne][colonne] = self.current_player
                 return True
         return False
-    
+
     def verifier_victoire(self):
         joueur = self.current_player
 
-        # Vérification horizontale
+        # Horizontal check
         for ligne in range(6):
             for col in range(4):
                 if (
@@ -160,7 +160,7 @@ class Connect4:
                     ]
                     return True
 
-        # Vérification verticale
+        # Vertical check
         for ligne in range(3):
             for col in range(7):
                 if (
@@ -177,7 +177,7 @@ class Connect4:
                     ]
                     return True
 
-        # Vérification diagonale descendante (\)
+        # Descending diagonal check (\)
         for ligne in range(3):
             for col in range(4):
                 if (
@@ -194,7 +194,7 @@ class Connect4:
                     ]
                     return True
 
-        # Vérification diagonale montante (/)
+        # Ascending diagonal check (/)
         for ligne in range(3, 6):
             for col in range(4):
                 if (
@@ -214,7 +214,7 @@ class Connect4:
         return False
 
     def verifier_match_nul(self):
-        """Vérifie si la grille est pleine."""
+        """Checks whether the grid is full."""
         for ligne in self.grid:
             if 0 in ligne:
                 return False
@@ -222,25 +222,25 @@ class Connect4:
 
     def jouer(self):
         """
-        Boucle globale mise à jour.
-        Gère les manches successives et l'invite de redémarrage (Tâche 2).
+        Updated main game loop.
+        Handles successive rounds and the restart prompt (Task 2).
         """
-        while True:  # <-- BOUCLE GLOBALE (Sessions / Manches)
-            colonne_actuelle = 3 
+        while True:  # <-- OUTER LOOP (Sessions / Rounds)
+            colonne_actuelle = 3
             msg_status = ""
             manche_terminee = False
 
-            while True:  # <-- BOUCLE DE LA MANCHE EN COURS (Tours)
+            while True:  # <-- INNER LOOP (Turns within a round)
                 self.clear_screen()
                 print("=== PUISSANCE 4 — MODE ARCADE ===")
                 print(f"SCORES | Joueur X (Rouge) : {self.score_j1} - Joueur O (Jaune) : {self.score_j2}")
                 print("-" * 33)
                 print(f"Joueur actuel : {self.current_player}")
                 print("Utilisez ◄ et ► pour vous déplacer, ENTRÉE pour jouer, 'q' pour quitter.")
-                
+
                 if msg_status:
                     print(msg_status)
-                    msg_status = "" 
+                    msg_status = ""
                 else:
                     print()
 
@@ -253,7 +253,7 @@ class Connect4:
                     colonne_actuelle = min(6, colonne_actuelle + 1)
                 elif touche == 'q':
                     print("\nPartie interrompue. Merci d'avoir joué !")
-                    return # Quitte définitivement le programme
+                    return  # Exits the program entirely
                 elif touche == 'enter':
                     if self.placer_jeton(colonne_actuelle):
                         if self.verifier_victoire():
@@ -261,15 +261,15 @@ class Connect4:
                                 self.score_j1 += 1
                             else:
                                 self.score_j2 += 1
-                                
+
                             self.clear_screen()
                             print("=== FIN DE LA MANCHE ===")
                             print(f"SCORES | Joueur X : {self.score_j1} - Joueur O : {self.score_j2}")
                             self.afficher_grille()
                             print(f"🏆 Félicitations ! Le joueur {self.current_player} a gagné la manche !")
                             manche_terminee = True
-                            break # Casse la boucle des tours
-                        
+                            break  # Exits the turn loop
+
                         if self.verifier_match_nul():
                             self.clear_screen()
                             print("=== FIN DE LA MANCHE ===")
@@ -277,26 +277,26 @@ class Connect4:
                             self.afficher_grille()
                             print("🤝 Match nul ! La grille est pleine.")
                             manche_terminee = True
-                            break # Casse la boucle des tours
-                        
+                            break  # Exits the turn loop
+
                         self.switch_player()
                     else:
                         msg_status = "⚠️ Erreur : La colonne est pleine ! Choisissez un autre endroit."
 
-            # Écran de choix de fin de manche
+            # End-of-round choice screen
             if manche_terminee:
                 print("\n👉 Pressez 'r' pour relancer une manche ou 'q' pour quitter définitivement.")
                 while True:
                     choix = get_key()
                     if choix == 'r':
                         self.reinitialiser_manche()
-                        break  # Casse la boucle d'attente et remonte au début de la boucle globale
+                        break  # Exits the wait loop and loops back to the outer loop
                     elif choix == 'q':
                         print("Merci d'avoir joué !")
-                        return  # Ferme définitivement l'application
+                        return  # Closes the application entirely
 
 
-# --- LANCEMENT ---
+# --- ENTRY POINT ---
 if __name__ == "__main__":
     jeu = Connect4()
     jeu.jouer()
