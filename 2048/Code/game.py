@@ -1,5 +1,49 @@
 import random
 import os
+import sys
+
+# Cross-platform instant keyboard capture
+try:
+    import msvcrt
+    def get_key():
+        """Captures a keypress on Windows (arrow keys return two bytes)."""
+        ch = msvcrt.getch()
+        if ch in (b'\x00', b'\xe0'):  # Special key (e.g. arrows)
+            ch2 = msvcrt.getch()
+            if ch2 == b'H': return 'up'
+            if ch2 == b'P': return 'down'
+            if ch2 == b'K': return 'left'
+            if ch2 == b'M': return 'right'
+        if ch in (b'\r', b'\n'):
+            return 'enter'
+        try:
+            return ch.decode('utf-8').lower()
+        except UnicodeDecodeError:
+            return None
+except ImportError:
+    import tty
+    import termios
+    def get_key():
+        """Captures a keypress on Linux / macOS."""
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+            if ch == '\x1b':  # Escape sequence (e.g. arrows)
+                ch2 = sys.stdin.read(1)
+                if ch2 == '[':
+                    ch3 = sys.stdin.read(1)
+                    if ch3 == 'A': return 'up'
+                    if ch3 == 'B': return 'down'
+                    if ch3 == 'D': return 'left'
+                    if ch3 == 'C': return 'right'
+            if ch in ('\r', '\n'):
+                return 'enter'
+            return ch.lower()
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
 
 class Game2048:
     def __init__(self):
@@ -218,7 +262,7 @@ if __name__ == "__main__":
 
     print("=== WELCOME TO 2048 ===")
 
-    # Task 2: Game loop using input()
+    # Task 2: Game loop using get_key()
     while True:
         jeu.print_board()
 
@@ -232,24 +276,25 @@ if __name__ == "__main__":
             break
 
         # Safe user input
-        action = input("Move (w=up, s=down, a=left, d=right) or 'quit' to stop: ").lower()
+        print("Move (w/↑=up, s/↓=down, a/←=left, d/→=right) or 'q' to quit.")
+        action = get_key()
 
         moved = False
         msg_erreur = ""
 
-        if action == 'w':
+        if action in ('w', 'up'):
             moved = jeu.move_up()
-        elif action == 's':
+        elif action in ('s', 'down'):
             moved = jeu.move_down()
-        elif action == 'a':
+        elif action in ('a', 'left'):
             moved = jeu.move_left()
-        elif action == 'd':
+        elif action in ('d', 'right'):
             moved = jeu.move_right()
-        elif action == 'quit':
+        elif action == 'q':
             print("Game aborted.")
             break
         else:
-            msg_erreur = "⚠️ Unknown command. Use w, a, s, d."
+            msg_erreur = "⚠️ Unknown command. Use w/a/s/d or arrow keys."
 
         # Clear the screen just before potentially adding a tile and looping back
         jeu.clear_screen()
@@ -264,5 +309,5 @@ if __name__ == "__main__":
         # If the move was valid, add a new tile
         if moved:
             jeu.add_random_tile()
-        elif action in ['w', 'a', 's', 'd']:  # Valid key pressed but nothing moved
+        elif action in ('w', 's', 'a', 'd', 'up', 'down', 'left', 'right'):  # Valid key pressed but nothing moved
             print("👉 No movement possible in that direction.\n")
